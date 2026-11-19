@@ -128,8 +128,8 @@ d = ImageDraw.Draw(poster)
 fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 F = lambda p, s: ImageFont.truetype(p, s)
-d.text((40, 30), "Pr1nt1t.sk", font=F(fb, 56), fill="white")
-d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v2", font=F(fr, 28), fill="#ece8ff")
+d.text((40, 30), "PR1NT 1T", font=F(fb, 56), fill="white")
+d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v3", font=F(fr, 28), fill="#ece8ff")
 d.text((PW - 40, 60), "NÁHĽAD", font=F(fb, 40), fill="white", anchor="ra")
 
 d.text((60, 1385), "Zadná strana – logo vložené vo farbe", font=F(fb, 24), fill="#333", anchor="ls")
@@ -140,8 +140,8 @@ d.text((1680, 790), "Detail: vyvýšený rámik kamery", font=F(fb, 24), fill="#
 y = 860
 d.text((1680, y), "Materiály a farby", font=F(fb, 30), fill="#222"); y += 52
 for hexc, txt in [("#1a1a1a", "Telo obalu – TPU 95A, čierna"),
-                  (COL_WHITE, f"„Pr1nt1t“ – PETG  {COL_WHITE}"),
-                  (COL_BLUE, f"„.sk“ – PETG  {COL_BLUE}"),
+                  (COL_WHITE, f"„PR1NT“ – PETG  {COL_WHITE}"),
+                  (COL_BLUE, f"„1T“ – PETG  {COL_BLUE}"),
                   (COL_PURPLE, f"Pásik + rámik kamery – PETG  {COL_PURPLE}")]:
     d.rounded_rectangle((1680, y, 1724, y + 44), 8, fill=hexc, outline="#888", width=2)
     d.text((1740, y + 22), txt, font=F(fr, 23), fill="#222", anchor="lm")

@@ -1,4 +1,4 @@
-# Pr1nt1t.sk – obal Samsung Galaxy S23 (návrh v1)
+# Pr1nt1t.sk – obal Samsung Galaxy S23 (návrh v3)
 
 ![Náhľad](nahlad_obal_S23_Pr1nt1t.png)
 
@@ -6,8 +6,8 @@
 | Súbor | Materiál | Farba |
 |---|---|---|
 | 01_obal_TPU_cierny.stl | TPU 95A | čierna |
-| 02_logo_Pr1nt1t_biela.stl | PETG (alebo PLA) | biela |
-| 03_logo_sk_modra_667eea.stl | PETG (alebo PLA) | #667eea |
+| 02_logo_PR1NT_biela.stl | PETG (alebo PLA) | biela |
+| 03_logo_1T_modra_667eea.stl | PETG (alebo PLA) | #667eea |
 | 04_logo_pasik_fialova_764ba2.stl | PETG (alebo PLA) | #764ba2 |
 | 05_ramik_kamery_fialova_764ba2.stl | PETG | #764ba2 – tlačí sa samostatne |
 

@@ -146,11 +146,11 @@ case -= slot_y(-6.5, 6.5, zc, 6.8, BOT - 5, BOT + 1)
 # Vrchný mikrofón
 case -= Manifold.cylinder(6, 1.0).rotate([-90, 0, 0]).translate([-8.0, TOP - 1, zc])
 
-# ================= LOGO Pr1nt1t.sk (vložky) =================
+# ================= LOGO PR1NT 1T (vložky): „PR1NT“ biela, „1T“ akcent =================
 # Text sa číta zo zadnej strany => zrkadlíme X.
 SIZE = 11.0
-full = text_cs("Pr1nt1t.sk", SIZE)
-main = text_cs("Pr1nt1t", SIZE)
+full = text_cs("PR1NT 1T", SIZE)
+main = text_cs("PR1NT", SIZE)
 minx, miny, maxx, maxy = full.bounds
 target_w = 60.0   # šírka loga v mm (zadná strana má ~74 mm)
 s = target_w / (maxx - minx)
@@ -212,8 +212,8 @@ def save_stl(man, name):
 
 PARTS = {
     "01_obal_TPU_cierny.stl": (case, COL_BLACK),
-    "02_logo_Pr1nt1t_biela.stl": (logo_white, COL_WHITE),
-    "03_logo_sk_modra_667eea.stl": (logo_blue, COL_BLUE),
+    "02_logo_PR1NT_biela.stl": (logo_white, COL_WHITE),
+    "03_logo_1T_modra_667eea.stl": (logo_blue, COL_BLUE),
     "04_logo_pasik_fialova_764ba2.stl": (logo_purple, COL_PURPLE),
     "05_ramik_kamery_fialova_764ba2.stl": (bezel, COL_PURPLE),
 }
