@@ -2,6 +2,7 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os
+from colors import COL_BLUE, COL_PURPLE, COL_WHITE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 M = np.load(os.path.join(HERE, ".preview_meshes.npz"))
@@ -14,10 +15,10 @@ def hex2rgb(h):
 
 MAT = {  # farba, lesk
     "case": (hex2rgb("#151515"), 0.18),
-    "white": (hex2rgb("#f4f4f4"), 0.25),
-    "blue": (hex2rgb("#667eea"), 0.3),
-    "purple": (hex2rgb("#764ba2"), 0.3),
-    "bezel": (hex2rgb("#764ba2"), 0.45),
+    "white": (hex2rgb(COL_WHITE), 0.25),
+    "blue": (hex2rgb(COL_BLUE), 0.3),
+    "purple": (hex2rgb(COL_PURPLE), 0.3),
+    "bezel": (hex2rgb(COL_PURPLE), 0.45),
     "phone": (hex2rgb("#2b2f36"), 0.9),
 }
 
@@ -118,7 +119,7 @@ poster = Image.new("RGB", (PW, PH), "#f3f1fb")
 # hlavička v gradiente značky
 hdr = np.zeros((150, PW, 3))
 tt = np.linspace(0, 1, PW)[None, :, None]
-hdr[:] = hex2rgb("#667eea") * (1 - tt) + hex2rgb("#764ba2") * tt
+hdr[:] = hex2rgb(COL_BLUE) * (1 - tt) + hex2rgb(COL_PURPLE) * tt
 poster.paste(Image.fromarray((hdr * 255).astype(np.uint8)), (0, 0))
 poster.paste(A, (20, 165))
 poster.paste(B, (820, 165))
@@ -128,7 +129,7 @@ fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 F = lambda p, s: ImageFont.truetype(p, s)
 d.text((40, 30), "Pr1nt1t.sk", font=F(fb, 56), fill="white")
-d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v1", font=F(fr, 28), fill="#ece8ff")
+d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v2", font=F(fr, 28), fill="#ece8ff")
 d.text((PW - 40, 60), "NÁHĽAD", font=F(fb, 40), fill="white", anchor="ra")
 
 d.text((60, 1385), "Zadná strana – logo vložené vo farbe", font=F(fb, 24), fill="#333", anchor="ls")
@@ -139,9 +140,9 @@ d.text((1680, 790), "Detail: vyvýšený rámik kamery", font=F(fb, 24), fill="#
 y = 860
 d.text((1680, y), "Materiály a farby", font=F(fb, 30), fill="#222"); y += 52
 for hexc, txt in [("#1a1a1a", "Telo obalu – TPU 95A, čierna"),
-                  ("#f4f4f4", "„Pr1nt1t“ – PLA/PETG, biela"),
-                  ("#667eea", "„.sk“ – PLA/PETG  #667eea"),
-                  ("#764ba2", "Pásik + rámik kamery – PETG  #764ba2")]:
+                  (COL_WHITE, f"„Pr1nt1t“ – PETG  {COL_WHITE}"),
+                  (COL_BLUE, f"„.sk“ – PETG  {COL_BLUE}"),
+                  (COL_PURPLE, f"Pásik + rámik kamery – PETG  {COL_PURPLE}")]:
     d.rounded_rectangle((1680, y, 1724, y + 44), 8, fill=hexc, outline="#888", width=2)
     d.text((1740, y + 22), txt, font=F(fr, 23), fill="#222", anchor="lm")
     y += 62

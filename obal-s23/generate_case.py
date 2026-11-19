@@ -36,10 +36,7 @@ LIP_IN = 1.0        # o koľko zasahuje okraj dovnútra cez displej
 INLAY = 0.6         # hĺbka farebných vložiek loga (3 vrstvy po 0.2 mm)
 
 # Farby značky (z webu Pr1nt1t.sk – styles.css)
-COL_BLUE = "#667eea"
-COL_PURPLE = "#764ba2"
-COL_WHITE = "#ffffff"
-COL_BLACK = "#1a1a1a"
+from colors import COL_BLUE, COL_PURPLE, COL_WHITE, COL_BLACK
 
 # Fotoaparáty (zo zadnej strany vľavo hore => v našich súradniciach +X)
 TOP = PH_L / 2
@@ -155,9 +152,9 @@ SIZE = 11.0
 full = text_cs("Pr1nt1t.sk", SIZE)
 main = text_cs("Pr1nt1t", SIZE)
 minx, miny, maxx, maxy = full.bounds
-target_w = 50.0
+target_w = 60.0   # šírka loga v mm (zadná strana má ~74 mm)
 s = target_w / (maxx - minx)
-LOGO_Y = -30.0
+LOGO_Y = 0.0      # stred zadnej strany
 def place(g):
     g = affinity.translate(g, -(minx + maxx) / 2, -(miny + maxy) / 2)
     g = affinity.scale(g, -s, s, origin=(0, 0))       # zrkadlenie pre zadnú stranu
