@@ -1,5 +1,5 @@
 """
-Pr1nt1t.sk – 3D tlačený obal pre Samsung Galaxy S23
+PR1NT 1T! (pr1nt1t.sk) – 3D tlačený obal pre Samsung Galaxy S23
 Generuje STL súbory pre viacfarebnú tlač (TPU čierne telo + PLA/PETG farebné vložky).
 
 Súradnice (pohľad spredu na displej): X = šírka (+X = strana s tlačidlami),
@@ -35,8 +35,8 @@ LIP = 0.8           # o koľko prečnieva okraj nad displej (ochrana pri polože
 LIP_IN = 1.0        # o koľko zasahuje okraj dovnútra cez displej
 INLAY = 0.6         # hĺbka farebných vložiek loga (3 vrstvy po 0.2 mm)
 
-# Farby značky (z webu Pr1nt1t.sk – styles.css)
-from colors import COL_BLUE, COL_PURPLE, COL_WHITE, COL_BLACK
+# Farby značky (z webu pr1nt1t.sk)
+from colors import COL_WHITE, COL_YELLOW, COL_BLACK
 
 # Fotoaparáty (zo zadnej strany vľavo hore => v našich súradniciach +X)
 TOP = PH_L / 2
@@ -146,11 +146,25 @@ case -= slot_y(-6.5, 6.5, zc, 6.8, BOT - 5, BOT + 1)
 # Vrchný mikrofón
 case -= Manifold.cylinder(6, 1.0).rotate([-90, 0, 0]).translate([-8.0, TOP - 1, zc])
 
-# ================= LOGO PR1NT 1T (vložky): „PR1NT“ biela, „1T“ akcent =================
+# ================= LOGO „PR1NT 1T!“ podľa webu pr1nt1t.sk =================
+# „PR1NT“ biela (rovné písmo), „1T!“ žltá kurzíva – Barlow Condensed Bold.
 # Text sa číta zo zadnej strany => zrkadlíme X.
-SIZE = 11.0
-full = text_cs("PR1NT 1T", SIZE)
-main = text_cs("PR1NT", SIZE)
+FONT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+def text_font(txt, size, fname):
+    tp = TextPath((0, 0), txt, size=size, prop=FontProperties(fname=os.path.join(FONT_DIR, fname)))
+    geom = None
+    for poly in tp.to_polygons():
+        if len(poly) < 3:
+            continue
+        q = Polygon(poly).buffer(0)
+        geom = q if geom is None else geom.symmetric_difference(q)
+    return geom
+
+SIZE = 10.0
+main = text_font("PR1NT", SIZE, "BarlowCondensed-Bold.ttf")
+accent = text_font("1T!", SIZE, "BarlowCondensed-BoldItalic.ttf")
+accent = affinity.translate(accent, main.bounds[2] + 0.22 * SIZE - accent.bounds[0], 0)
+full = unary_union([main, accent])
 minx, miny, maxx, maxy = full.bounds
 target_w = 60.0   # šírka loga v mm (zadná strana má ~74 mm)
 s = target_w / (maxx - minx)
@@ -159,23 +173,17 @@ def place(g):
     g = affinity.translate(g, -(minx + maxx) / 2, -(miny + maxy) / 2)
     g = affinity.scale(g, -s, s, origin=(0, 0))       # zrkadlenie pre zadnú stranu
     return affinity.translate(g, 0, LOGO_Y)
-full_p = place(full)
 main_p = place(main)
-sk_p = full_p.difference(main_p.buffer(0.05))
-# Podčiarknutie (fialový pásik) + malá „tryska“ ako akcent
-fb = full_p.bounds
-bar = Polygon([(fb[0], fb[1] - 3.2), (fb[2], fb[1] - 3.2), (fb[2], fb[1] - 1.8), (fb[0], fb[1] - 1.8)])
-bar = bar.buffer(0.7, join_style=1)
+accent_p = place(accent)
 
 def inlay(geom):
     return shp_to_cs(geom).extrude(INLAY).translate([0, 0, Z_BACK])
 
 logo_white = inlay(main_p)
-logo_blue = inlay(sk_p)
-logo_purple = inlay(bar)
-case = case - logo_white - logo_blue - logo_purple
+logo_yellow = inlay(accent_p)
+case = case - logo_white - logo_yellow
 
-# ================= Rámik fotoaparátu (PETG fialový, samostatný diel) =================
+# ================= Rámik fotoaparátu (PETG žltý, samostatný diel) =================
 BEZ_H = 1.4   # o koľko vystúpi nad zadnú stranu obalu (ochrana šošoviek)
 bez_outer = cam_cut.offset(BEZ_SPIGOT + 2.0, JoinType.Round)
 flange = (bez_outer - cam_cut).extrude(BEZ_H).translate([0, 0, Z_BACK - BEZ_H])
@@ -203,7 +211,7 @@ def save_stl(man, name):
     data["n"] = n
     data["v"] = tri
     with open(path, "wb") as f:
-        f.write(b"Pr1nt1t.sk Galaxy S23 case".ljust(80, b" "))
+        f.write(b"PR1NT 1T! Galaxy S23 case".ljust(80, b" "))
         f.write(np.uint32(len(t)).tobytes())
         f.write(data.tobytes())
     print(f"{name:32s} {len(t):7d} tri  vol {man.volume()/1000:6.2f} cm3")
@@ -213,9 +221,8 @@ def save_stl(man, name):
 PARTS = {
     "01_obal_TPU_cierny.stl": (case, COL_BLACK),
     "02_logo_PR1NT_biela.stl": (logo_white, COL_WHITE),
-    "03_logo_1T_modra_667eea.stl": (logo_blue, COL_BLUE),
-    "04_logo_pasik_fialova_764ba2.stl": (logo_purple, COL_PURPLE),
-    "05_ramik_kamery_fialova_764ba2.stl": (bezel, COL_PURPLE),
+    "03_logo_1T_zlta_f3c927.stl": (logo_yellow, COL_YELLOW),
+    "04_ramik_kamery_zlta_f3c927.stl": (bezel, COL_YELLOW),
 }
 
 if __name__ == "__main__":
@@ -223,5 +230,5 @@ if __name__ == "__main__":
         save_stl(m, name)
     np.savez_compressed(os.path.join(OUT, "..", ".preview_meshes.npz"),
                         **{k: np.concatenate([np.asarray(m.to_mesh().vert_properties)[:, :3][np.asarray(m.to_mesh().tri_verts)].reshape(-1, 9)])
-                           for k, m in [("case", case), ("white", logo_white), ("blue", logo_blue),
-                                        ("purple", logo_purple), ("bezel", bezel), ("phone", phone)]})
+                           for k, m in [("case", case), ("white", logo_white), ("yellow", logo_yellow),
+                                        ("bezel", bezel), ("phone", phone)]})

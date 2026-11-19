@@ -2,7 +2,7 @@
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os
-from colors import COL_BLUE, COL_PURPLE, COL_WHITE
+from colors import COL_WHITE, COL_YELLOW, COL_BLACK
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 M = np.load(os.path.join(HERE, ".preview_meshes.npz"))
@@ -14,11 +14,10 @@ def hex2rgb(h):
 
 
 MAT = {  # farba, lesk
-    "case": (hex2rgb("#151515"), 0.18),
+    "case": (hex2rgb("#141517"), 0.18),
     "white": (hex2rgb(COL_WHITE), 0.25),
-    "blue": (hex2rgb(COL_BLUE), 0.3),
-    "purple": (hex2rgb(COL_PURPLE), 0.3),
-    "bezel": (hex2rgb(COL_PURPLE), 0.45),
+    "yellow": (hex2rgb(COL_YELLOW), 0.3),
+    "bezel": (hex2rgb(COL_YELLOW), 0.45),
     "phone": (hex2rgb("#2b2f36"), 0.9),
 }
 
@@ -33,7 +32,7 @@ def rot(yaw, pitch, roll=0):
     return Rx @ Ry @ Rz
 
 
-def render(parts, R, size=(900, 1300), scale=7.0, offsets=None, bg_top="#f3f1fb", bg_bot="#d9d4ee"):
+def render(parts, R, size=(900, 1300), scale=7.0, offsets=None, bg_top="#f4f4f2", bg_bot="#d9d9d4"):
     W, H = size
     img = np.zeros((H, W, 3))
     t = np.linspace(0, 1, H)[:, None, None]
@@ -102,24 +101,24 @@ SS = 2
 deg = np.pi / 180
 # 1) zadná strana 3/4 – obal + logo + rámik
 R_back = rot(180 * deg + 28 * deg, -14 * deg, 4 * deg)
-a, ma = render(["case", "white", "blue", "purple", "bezel"], R_back, size=(820 * SS, 1240 * SS), scale=6.6 * SS)
+a, ma = render(["case", "white", "yellow", "bezel"], R_back, size=(820 * SS, 1240 * SS), scale=6.6 * SS)
 # 2) predná strana s telefónom
 R_front = rot(-30 * deg, -16 * deg, -4 * deg)
 b, mb = render(["case", "phone"], R_front, size=(820 * SS, 1240 * SS), scale=6.6 * SS)
 # 3) detail kamery
 R_cam = rot(180 * deg + 20 * deg, -30 * deg, 0)
-c, mc = render(["case", "white", "blue", "purple", "bezel"], R_cam, size=(560 * SS, 560 * SS), scale=13 * SS,
-               offsets={k: (-19.5, -45.5, 0) for k in ["case", "white", "blue", "purple", "bezel"]})
+c, mc = render(["case", "white", "yellow", "bezel"], R_cam, size=(560 * SS, 560 * SS), scale=13 * SS,
+               offsets={k: (-19.5, -45.5, 0) for k in ["case", "white", "yellow", "bezel"]})
 
 A, B, C = to_pil(a, ma, SS), to_pil(b, mb, SS), to_pil(c, mc, SS)
 
 # Zloženie plagátu
 PW, PH = 2280, 1420
-poster = Image.new("RGB", (PW, PH), "#f3f1fb")
+poster = Image.new("RGB", (PW, PH), "#f4f4f2")
 # hlavička v gradiente značky
 hdr = np.zeros((150, PW, 3))
 tt = np.linspace(0, 1, PW)[None, :, None]
-hdr[:] = hex2rgb(COL_BLUE) * (1 - tt) + hex2rgb(COL_PURPLE) * tt
+hdr[:] = hex2rgb(COL_BLACK)
 poster.paste(Image.fromarray((hdr * 255).astype(np.uint8)), (0, 0))
 poster.paste(A, (20, 165))
 poster.paste(B, (820, 165))
@@ -128,9 +127,13 @@ d = ImageDraw.Draw(poster)
 fb = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 fr = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 F = lambda p, s: ImageFont.truetype(p, s)
-d.text((40, 30), "PR1NT 1T", font=F(fb, 56), fill="white")
-d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v3", font=F(fr, 28), fill="#ece8ff")
-d.text((PW - 40, 60), "NÁHĽAD", font=F(fb, 40), fill="white", anchor="ra")
+FD = os.path.join(HERE, "fonts")
+lf = F(os.path.join(FD, "BarlowCondensed-Bold.ttf"), 72)
+li = F(os.path.join(FD, "BarlowCondensed-BoldItalic.ttf"), 72)
+d.text((40, 18), "PR1NT", font=lf, fill=COL_WHITE)
+d.text((40 + d.textlength("PR1NT", font=lf) + 14, 18), "1T!", font=li, fill=COL_YELLOW)
+d.text((44, 98), "3D tlačený obal  •  Samsung Galaxy S23  •  návrh v4", font=F(fr, 28), fill="#b8bcc4")
+d.text((PW - 40, 60), "NÁHĽAD", font=F(fb, 40), fill=COL_YELLOW, anchor="ra")
 
 d.text((60, 1385), "Zadná strana – logo vložené vo farbe", font=F(fb, 24), fill="#333", anchor="ls")
 d.text((860, 1385), "Predná strana – ochranný okraj nad displejom", font=F(fb, 24), fill="#333", anchor="ls")
@@ -140,15 +143,15 @@ d.text((1680, 790), "Detail: vyvýšený rámik kamery", font=F(fb, 24), fill="#
 y = 860
 d.text((1680, y), "Materiály a farby", font=F(fb, 30), fill="#222"); y += 52
 for hexc, txt in [("#1a1a1a", "Telo obalu – TPU 95A, čierna"),
-                  (COL_WHITE, f"„PR1NT“ – PETG  {COL_WHITE}"),
-                  (COL_BLUE, f"„1T“ – PETG  {COL_BLUE}"),
-                  (COL_PURPLE, f"Pásik + rámik kamery – PETG  {COL_PURPLE}")]:
+                  (COL_WHITE, f"„PR1NT“ – PETG biela  {COL_WHITE}"),
+                  (COL_YELLOW, f"„1T!“ – PETG žltá  {COL_YELLOW}"),
+                  (COL_YELLOW, f"Rámik kamery – PETG žltá  {COL_YELLOW}")]:
     d.rounded_rectangle((1680, y, 1724, y + 44), 8, fill=hexc, outline="#888", width=2)
     d.text((1740, y + 22), txt, font=F(fr, 23), fill="#222", anchor="lm")
     y += 62
 d.text((1680, y + 10), "Telefón: 146,3 × 70,9 × 7,6 mm\nStena 1,6 mm • Okraj +0,8 mm\nRámik kamery +1,4 mm",
        font=F(fr, 22), fill="#555", spacing=8)
 
-out = os.path.join(HERE, "nahlad_obal_S23_Pr1nt1t.png")
+out = os.path.join(HERE, "nahlad_obal_S23_PR1NT_1T.png")
 poster.save(out)
 print(out)

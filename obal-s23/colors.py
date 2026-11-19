@@ -1,6 +1,4 @@
-# Farby značky – zmeň tu a spusti generate_case.py + render_preview.py
-COL_TEXT_MAIN = "#ffffff"   # „PR1NT“
-COL_BLUE = "#667eea"        # „1T“
-COL_PURPLE = "#764ba2"      # pásik + rámik kamery
-COL_WHITE = COL_TEXT_MAIN
-COL_BLACK = "#1a1a1a"       # TPU telo
+# Farby značky PR1NT 1T! – podľa webu pr1nt1t.sk
+COL_WHITE = "#f2f3f5"   # „PR1NT“
+COL_YELLOW = "#f3c927"  # „1T!“ + rámik kamery
+COL_BLACK = "#101113"   # TPU telo (pozadie webu)
