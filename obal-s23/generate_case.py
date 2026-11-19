@@ -163,6 +163,8 @@ def text_font(txt, size, fname):
 SIZE = 10.0
 main = text_font("PR1NT", SIZE, "BarlowCondensed-Bold.ttf")
 accent = text_font("1T!", SIZE, "BarlowCondensed-BoldItalic.ttf")
+ACCENT_EXTRA_SKEW = 12.0   # extra sklon „1T!“ v stupňoch (navyše ku kurzíve fontu)
+accent = affinity.skew(accent, xs=ACCENT_EXTRA_SKEW, origin=(0, 0))
 accent = affinity.translate(accent, main.bounds[2] + 0.22 * SIZE - accent.bounds[0], 0)
 full = unary_union([main, accent])
 minx, miny, maxx, maxy = full.bounds
